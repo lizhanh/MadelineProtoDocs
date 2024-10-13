@@ -1,51 +1,51 @@
 ---
-title: "Handling updates (new messages & other events)"
-description: "Update handling can be done in different ways:"
+标题：“处理更新（新消息和其他事件）”
+描述：“更新过程可以用不同的方式进行：”
 nav_order: 12
-image: https://docs.madelineproto.xyz/favicons/android-chrome-256x256.png
+图片来源：https://docs.Madeleinproto.xyz/favicens/android-chrome-256x256.png
 ---
-# Handling updates (new messages & other events)
+#处理更新（新消息和其他事件）
 
-Update handling can be done in different ways: 
+更新处理可以通过不同的方式进行：
 
-* [Async Event driven](#async-event-driven)
-  * [Full example](#async-event-driven)
-  * [Bound methods](#bound-methods)
-  * [Filters](https://docs.madelineproto.xyz/docs/FILTERS.html)
-    * [Simple filters](https://docs.madelineproto.xyz/docs/FILTERS.html#simple-filters)
-    * [Attribute filters](https://docs.madelineproto.xyz/docs/FILTERS.html#attribute-filters)
-    * [MTProto filters](https://docs.madelineproto.xyz/docs/FILTERS.html#mtproto-filters)
-  * [Plugins](https://docs.madelineproto.xyz/docs/PLUGINS.html)
-  * [Cron](#cron)
-  * [Persisting data and IPC](#persisting-data-and-ipc)
-  * [Built-in ORM](#built-in-orm)
-  * [IPC](#ipc)
-  * [Restarting](#restarting)
-  * [Self-restart on webhosts](#self-restart-on-webhosts)
+* [异步事件驱动](#async-event-driven)
+  * [全例](#async-event-driven)
+  * [束缚法](#bound-methods)
+  * [过滤](https://docs.madelineproto.xyz/docs/FILTERS.html)
+    * [简易过滤器](https://docs.madelineproto.xyz/docs/FILTERS.html#simple-filters)
+    * [属性过滤器](https://docs.madelineproto.xyz/docs/FILTERS.html#attribute-filters)
+    * [标题：“处理更新（新消息和其他事件）”](https://docs.madelineproto.xyz/docs/FILTERS.html#mtproto-filters)
+  * [if ($this->isSelfBot()) {](https://docs.madelineproto.xyz/docs/PLUGINS.html)
+  * [* [Full bound method list »](https://docs.madelineproto.xyz/PHP/danog/madelineproto/EventHandler/Message.html#method-list)](#cron)
+  * [消息：“这个评论是由[*[danog\MadelineProto\EventHandler\Message\ChannelMessage]（https://docs.MadelineProto.xyz/PHP/danog/MadelineProto/EventHandler/Message/ChannelMessage.html）-表示传入或传出的通道消息。]（https：//T. me/MadelineProto）提供的！”](#persisting-data-and-ipc)
+  * [*[Webhook（用于 HTTP API）]（https://docs.madelineproto.xyz/PHP/danog/madelineproto/EventHandler/Message/ChannelMessage.html#properties）](#built-in-orm)
+  * [* [getUpdates（仅用于 Javascript API）](https://docs.madelineproto.xyz/PHP/danog/MadelineProto/EventHandler/Message/ChannelMessage.html#method-list)](#ipc)
+  * [*[danog\MadelineProto\EventHandler\Message\CommentReply]（https：//docs. MadelineProto. xyz/PHP/danog/MadelineProto/EventHandler/Message/CommentReply. html）-表示对我们不属于的频道评论组中的一条消息的回复（即通过@replies接收）。](#restarting)
+  * [*[完整属性列表]（https://docs.Madeleinproto.xyz/PHP/danog/madelineproto/EventHandler/Message/CommentReply.html#properties）](#self-restart-on-webhosts)
   * [Multi-account](#multiaccount)
-  * [Automatic static analysis](#automatic-static-analysis)
-  * [Avoiding the use of filesystem functions](#avoiding-the-use-of-filesystem-functions)
-* [Webhook (for HTTP APIs)](#webhook)
-* [getUpdates (only for Javascript APIs)](#getUpdates)
-* [Noop (default)](#noop)
+  * [* [Full bound method list »](https://docs.madelineproto.xyz/PHP/danog/MadelineProto/EventHandler/Message/CommentReply.html#method-list)](#automatic-static-analysis)
+  * [*[danog\MadelineProto\EventHandler\Message\GroupMessage]（https://docs.MadelineProto.xyz/PHP/danog/MadelineProto/EventHandler/Message/GroupMessage.html）-表示传入或传出的组消息。](#avoiding-the-use-of-filesystem-functions)
+* [from_peer: $message->senderId,](#webhook)
+* [属性过滤器](#getUpdates)
+* [*[danog\MadelineProto\EventHandler\Delete\DeleteMessages]（https://docs.MadelineProto.xyz/PHP/danog/MadelineProto/EventHandler/Delete/DeleteMessages.html）-在私人聊天或简单组中删除了一些消息。](#noop)
 
 
-## Async Event driven
+*[* [Full bound method list »](https://docs.madelineproto.xyz/PHP/danog/MadelineProto/EventHandler/Message/Service/DialogGroupCall.html#method-list)]（https://docs.madelineproto.xyz/PHP/danog/madelineproto/EventHandler/Delete/DeleteMessages.html#properties）
 
-[Plugins &raquo; are also supported!](https://docs.madelineproto.xyz/docs/PLUGINS.html)
+[<!-- cut_here_end examples/simpleBot.php -->&raquo;高级示例：](https://docs.madelineproto.xyz/docs/PLUGINS.html)
 
-Simple example:
-<!-- cut_here examples/simpleBot.php -->
-
-```php
+$this->日志记录器（“bot已启动！”）；
 <?php declare(strict_types=1);
 
-// Simple example bot.
-// PHP 8.2.4+ is required.
+示例bot。
+PHP 8. 2.4+是必需的。
 
-// Run via CLI (recommended: `screen php bot.php`) or via web.
+版权2016-2020 Daniil Gentili
+* (https://daniil.it)
 
-// To reduce RAM usage, follow these instructions: https://docs.madelineproto.xyz/docs/DATABASE.html
+这个文件是MadelineProto的一部分。
+
+MadelineProto是自由软件：您可以根据自由软件基金会发布的GNU Affero通用公共许可证的条款重新发布和/或修改它，要么是许可证的第3版，要么（由您选择）任何以后的版本。
 
 use danog\MadelineProto\EventHandler\Attributes\Handler;
 use danog\MadelineProto\EventHandler\Message;
@@ -134,21 +134,21 @@ Advanced example:
  * @author    Daniil Gentili <daniil@daniil.it>
  * @copyright 2016-2023 Daniil Gentili <daniil@daniil.it>
  * @license   https://opensource.org/licenses/AGPL-3.0 AGPLv3
- * @link https://docs.madelineproto.xyz MadelineProto documentation
+使用danog\MadelineProto\EventHandler\Attributes\Handler；
  */
 
-use danog\MadelineProto\API;
-use danog\MadelineProto\Broadcast\Progress;
-use danog\MadelineProto\Broadcast\Status;
-use danog\MadelineProto\EventHandler\Attributes\Cron;
-use danog\MadelineProto\EventHandler\Attributes\Handler;
-use danog\MadelineProto\EventHandler\Filter\FilterCommand;
-use danog\MadelineProto\EventHandler\Filter\FilterRegex;
-use danog\MadelineProto\EventHandler\Filter\FilterText;
-use danog\MadelineProto\EventHandler\Filter\FilterTextCaseInsensitive;
-use danog\MadelineProto\EventHandler\Message;
-use danog\MadelineProto\EventHandler\Message\ChannelMessage;
-use danog\MadelineProto\EventHandler\Message\Service\DialogPhotoChanged;
+使用danog\MadelineProto\EventHandler\Message；
+使用danog\MadelineProto\EventHandler\Plugin\RestartPlugin；
+使用danog\MadelineProto\EventHandler\SimpleFilter\Incoming；
+使用danog\MadelineProto\SimpleEventHandler；
+//通过composer加载（推荐，请参阅https://docs.Madelinepo.xyz/docs/INSTALLATION.html#composer-from-scratch）
+if (file_exists('vendor/autoload.php')) {
+require_once 'vendor/autoload.php';
+} else {
+//否则通过Madeline.php下载MadelineProto!!alpha!!版本
+if (!file_exists('madeline.php')) {
+复制（'https://phar.madelineproto.xyz/madeline.php'、'madeline.php'）；
+require_once 'madeline.php';
 use danog\MadelineProto\EventHandler\Plugin\RestartPlugin;
 use danog\MadelineProto\EventHandler\SimpleFilter\FromAdmin;
 use danog\MadelineProto\EventHandler\SimpleFilter\Incoming;
@@ -540,16 +540,16 @@ Here's a full list of the concrete object types on which bound methods and prope
 * [danog\MadelineProto\EventHandler\InlineQuery &raquo;](https://docs.madelineproto.xyz/PHP/danog/MadelineProto/EventHandler/InlineQuery.html) - An incoming inline query.
   * [Full property list &raquo;](https://docs.madelineproto.xyz/PHP/danog/MadelineProto/EventHandler/InlineQuery.html#properties)
   * [Full bound method list &raquo;](https://docs.madelineproto.xyz/PHP/danog/MadelineProto/EventHandler/InlineQuery.html#method-list)
-* [danog\MadelineProto\EventHandler\Message &raquo;](https://docs.madelineproto.xyz/PHP/danog/MadelineProto/EventHandler/Message.html) - Represents an incoming or outgoing message.
-  * [Full property list &raquo;](https://docs.madelineproto.xyz/PHP/danog/MadelineProto/EventHandler/Message.html#properties)
-  * [Full bound method list &raquo;](https://docs.madelineproto.xyz/PHP/danog/MadelineProto/EventHandler/Message.html#method-list)
-* [danog\MadelineProto\EventHandler\Message\ChannelMessage &raquo;](https://docs.madelineproto.xyz/PHP/danog/MadelineProto/EventHandler/Message/ChannelMessage.html) - Represents an incoming or outgoing channel message.
-  * [Full property list &raquo;](https://docs.madelineproto.xyz/PHP/danog/MadelineProto/EventHandler/Message/ChannelMessage.html#properties)
-  * [Full bound method list &raquo;](https://docs.madelineproto.xyz/PHP/danog/MadelineProto/EventHandler/Message/ChannelMessage.html#method-list)
-* [danog\MadelineProto\EventHandler\Message\CommentReply &raquo;](https://docs.madelineproto.xyz/PHP/danog/MadelineProto/EventHandler/Message/CommentReply.html) - Represents a reply to one of our messages in a channel comment group that we're not a member of (i.e. received via `@replies`).
-  * [Full property list &raquo;](https://docs.madelineproto.xyz/PHP/danog/MadelineProto/EventHandler/Message/CommentReply.html#properties)
-  * [Full bound method list &raquo;](https://docs.madelineproto.xyz/PHP/danog/MadelineProto/EventHandler/Message/CommentReply.html#method-list)
-* [danog\MadelineProto\EventHandler\Message\GroupMessage &raquo;](https://docs.madelineproto.xyz/PHP/danog/MadelineProto/EventHandler/Message/GroupMessage.html) - Represents an incoming or outgoing group message.
+* (https://daniil.it)
+这个文件是MadelineProto的一部分。
+MadelineProto是自由软件：您可以根据自由软件基金会发布的GNU Affero通用公共许可证的条款重新发布和/或修改它，要么是许可证的第3版，要么（由您选择）任何以后的版本。
+*分发MadelineProto是希望它有用，但没有任何保证；甚至没有对适销性或适合某一特定用途的默示保证。
+*有关详细信息，请参阅GNU Affero通用公共许可证。
+*您应该已经收到了GNU通用公共许可证的副本连同MadelineProto。
+*如果没有，请参阅<http://www.gnu.org/licenses/>。
+* @author Daniil Gentili <daniil@daniil.it>
+* @copyright 2016-2023 Daniil Gentili <daniil@daniil.it>
+* @license https://opensource.org/licenses/AGPL-3.0 AGPLv3
   * [Full property list &raquo;](https://docs.madelineproto.xyz/PHP/danog/MadelineProto/EventHandler/Message/GroupMessage.html#properties)
   * [Full bound method list &raquo;](https://docs.madelineproto.xyz/PHP/danog/MadelineProto/EventHandler/Message/GroupMessage.html#method-list)
 * [danog\MadelineProto\EventHandler\Message\PrivateMessage &raquo;](https://docs.madelineproto.xyz/PHP/danog/MadelineProto/EventHandler/Message/PrivateMessage.html) - Represents an incoming or outgoing private message.
@@ -588,18 +588,18 @@ Here's a full list of the concrete object types on which bound methods and prope
 * [danog\MadelineProto\EventHandler\Message\Service\DialogDeleteMessages &raquo;](https://docs.madelineproto.xyz/PHP/danog/MadelineProto/EventHandler/Message/Service/DialogDeleteMessages.html) - Deleted messages.
   * [Full property list &raquo;](https://docs.madelineproto.xyz/PHP/danog/MadelineProto/EventHandler/Message/Service/DialogDeleteMessages.html#properties)
   * [Full bound method list &raquo;](https://docs.madelineproto.xyz/PHP/danog/MadelineProto/EventHandler/Message/Service/DialogDeleteMessages.html#method-list)
-* [danog\MadelineProto\EventHandler\Message\Service\DialogGameScore &raquo;](https://docs.madelineproto.xyz/PHP/danog/MadelineProto/EventHandler/Message/Service/DialogGameScore.html) - Someone scored in a game.
-  * [Full property list &raquo;](https://docs.madelineproto.xyz/PHP/danog/MadelineProto/EventHandler/Message/Service/DialogGameScore.html#properties)
-  * [Full bound method list &raquo;](https://docs.madelineproto.xyz/PHP/danog/MadelineProto/EventHandler/Message/Service/DialogGameScore.html#method-list)
-* [danog\MadelineProto\EventHandler\Message\Service\DialogGeoProximityReached &raquo;](https://docs.madelineproto.xyz/PHP/danog/MadelineProto/EventHandler/Message/Service/DialogGeoProximityReached.html) - A user of the chat is now in proximity of another user.
-  * [Full property list &raquo;](https://docs.madelineproto.xyz/PHP/danog/MadelineProto/EventHandler/Message/Service/DialogGeoProximityReached.html#properties)
-  * [Full bound method list &raquo;](https://docs.madelineproto.xyz/PHP/danog/MadelineProto/EventHandler/Message/Service/DialogGeoProximityReached.html#method-list)
-* [danog\MadelineProto\EventHandler\Message\Service\DialogGiftPremium &raquo;](https://docs.madelineproto.xyz/PHP/danog/MadelineProto/EventHandler/Message/Service/DialogGiftPremium.html) - Info about a gifted Telegram Premium subscription.
-  * [Full property list &raquo;](https://docs.madelineproto.xyz/PHP/danog/MadelineProto/EventHandler/Message/Service/DialogGiftPremium.html#properties)
-  * [Full bound method list &raquo;](https://docs.madelineproto.xyz/PHP/danog/MadelineProto/EventHandler/Message/Service/DialogGiftPremium.html#method-list)
-* [danog\MadelineProto\EventHandler\Message\Service\DialogGroupCall &raquo;](https://docs.madelineproto.xyz/PHP/danog/MadelineProto/EventHandler/Message/Service/DialogGroupCall.html) - Represents a service message about a group call.
-  * [Full property list &raquo;](https://docs.madelineproto.xyz/PHP/danog/MadelineProto/EventHandler/Message/Service/DialogGroupCall.html#properties)
-  * [Full bound method list &raquo;](https://docs.madelineproto.xyz/PHP/danog/MadelineProto/EventHandler/Message/Service/DialogGroupCall.html#method-list)
+//！！把这个改成你的用户名！！！
+public const ADMIN = "@me";
+获取报告错误的对等点。
+公共函数getReportPeers（）
+返回[self：：ADMIN]；
+返回一组要激活的插件。
+关于插件的更多信息请参阅这里：https://docs.Madelinepo.xyz/docs/PLUGINS.html
+公共静态函数getPlugins（）：数组
+归还[
+//向管理员提供了一个/restart命令，可用于重新启动机器人，并应用更改。
+//在通过CLI运行时，确保在bash while循环中运行，以允许自重新启动。
+处理来自用户、聊天记录和频道的更新。
 * [danog\MadelineProto\EventHandler\Message\Service\DialogGroupCall\GroupCall &raquo;](https://docs.madelineproto.xyz/PHP/danog/MadelineProto/EventHandler/Message/Service/DialogGroupCall/GroupCall.html) - The group call has started or ended.
   * [Full property list &raquo;](https://docs.madelineproto.xyz/PHP/danog/MadelineProto/EventHandler/Message/Service/DialogGroupCall/GroupCall.html#properties)
   * [Full bound method list &raquo;](https://docs.madelineproto.xyz/PHP/danog/MadelineProto/EventHandler/Message/Service/DialogGroupCall/GroupCall.html#method-list)
@@ -646,7 +646,7 @@ Here's a full list of the concrete object types on which bound methods and prope
   * [Full property list &raquo;](https://docs.madelineproto.xyz/PHP/danog/MadelineProto/EventHandler/Message/Service/DialogSetChatWallPaper.html#properties)
   * [Full bound method list &raquo;](https://docs.madelineproto.xyz/PHP/danog/MadelineProto/EventHandler/Message/Service/DialogSetChatWallPaper.html#method-list)
 * [danog\MadelineProto\EventHandler\Message\Service\DialogSetTTL &raquo;](https://docs.madelineproto.xyz/PHP/danog/MadelineProto/EventHandler/Message/Service/DialogSetTTL.html) - The Time-To-Live of messages in this chat was changed.
-  * [Full property list &raquo;](https://docs.madelineproto.xyz/PHP/danog/MadelineProto/EventHandler/Message/Service/DialogSetTTL.html#properties)
+使用danog\MadelineProto\EventHandler\Message\Service\DialogPhotoChanged；
   * [Full bound method list &raquo;](https://docs.madelineproto.xyz/PHP/danog/MadelineProto/EventHandler/Message/Service/DialogSetTTL.html#method-list)
 * [danog\MadelineProto\EventHandler\Message\Service\DialogSuggestProfilePhoto &raquo;](https://docs.madelineproto.xyz/PHP/danog/MadelineProto/EventHandler/Message/Service/DialogSuggestProfilePhoto.html) - A new profile picture was suggested using [photos.uploadContactProfilePhoto](https://docs.madelineproto.xyz/API_docs/methods/photos.uploadContactProfilePhoto.html).
   * [Full property list &raquo;](https://docs.madelineproto.xyz/PHP/danog/MadelineProto/EventHandler/Message/Service/DialogSuggestProfilePhoto.html#properties)
